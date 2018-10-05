@@ -1,5 +1,10 @@
-Whistlerr
-=========
+# Whistleroll
+
+Scroll by whistling.
+
+Uses [Whistlerr by Shubhamajain](http://shubhamjain.github.io/whistlerr/)
+
+## Whistlerr
 
 Whistlerr is a whistle detection program which implements M. Nilsson's research paper - "[Human Whistle Detection and Frequency Estimation][1]".
 
@@ -8,16 +13,14 @@ Although it's accurate, it may fail against significant background noise. [Demo 
 Works in node and browsers.
 
 
-How it works
-=============
+### How it works
 
 It works by detecting high energy spikes in the band of 500-5000Hz where most people blow whistles.
 
 On the browser it uses HTML5 WebAudio API, and on node it relies on [mic](https://www.npmjs.com/package/mic) npm module.
 
 
-Browser usage
-===========
+### Browser usage
 
 You have to include `build/whistle.build.js` and then call `whistlerr` with callback function and threshold value.
 
@@ -38,8 +41,8 @@ whistlerr(function(result) {
 see `demo/browser/` for a full example.
 
 
-Node usage
-===========
+### Node usage
+
 see `demo/node/` for a full example.
 
 
