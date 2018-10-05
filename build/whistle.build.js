@@ -210,16 +210,7 @@ module.exports = function whistlerr(whistleCallback, config) {
 				whistleCallback({
 					ratio: ratio,
           jDiff: jDiff,
-          sumAmp: sumAmplitudes,
-          totalSamples: totalSamples,
-          positiveSamples: positiveSamples,
-          normData: normData,
-          fft: fft,
-          // pbp: pbp,
-          // pbs: pbs,
-          maxpbp: maxpbp,
-          minpbp: minpbp,
-          //i: i
+          fft: fft
 				});
 		 	}
 		}
