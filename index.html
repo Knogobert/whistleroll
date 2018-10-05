@@ -54,16 +54,50 @@
             </div>
         </div>
         <script>
-            var floater = document.querySelector('#wroll-floater');
-            var config = {
+            let peakee = 0;
+            let floater = document.querySelector('#wroll-floater');
+            let config = {
                 sampleThreshold: 8
             };
 
-            whistlerr(function (result) {
-                console.log("Whistle detected with data: ", result);
+            const getScroll = (peakBand) => {
+                // console.log('peakBand', peakBand);
+                // console.log('peakee', peakee);
+                let direction = 0;
 
-                floater.style.top = result.ratio + '%';
+                if (peakBand < peakee) {
+                    console.log('down '+peakBand+' < '+peakee);
+                    direction = -1;
+                    peakee = peakBand;
+                }else if (peakBand > peakee){
+                    console.log('up ' + peakBand + ' > ' + peakee);
+                    direction = 1;
+                    peakee = peakBand;
+                }else{
+                    console.log('SAME '+peakBand+' > '+peakee);
+                    //direction = 0;
+                }
 
+                return direction;
+            };
+
+            whistlerr( (result) => {
+                //console.log("Whistle detected with data: ", result);
+
+                let snubbeibyxor = getScroll(result.fft.getBandFrequency(result.fft.peakBand));
+
+                switch (snubbeibyxor) {
+                    case 1:
+                        console.log('floater.style.top', floater.style.top);
+                        floater.style.top = (Number(floater.style.top.slice(0,-2)) - 50) + 'px';
+                        break;
+                    case -1:
+                        floater.style.top = (Number(floater.style.top.slice(0, -2)) + 50) + 'px';
+                        break;
+
+                    default:
+                        break;
+                }
                 // var containerWidth = demo.container.offsetWidth;
                 // var containerHeight = demo.container.offsetHeight;
 

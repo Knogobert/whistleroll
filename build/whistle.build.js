@@ -113,7 +113,7 @@ module.exports = function whistlerr(whistleCallback, config) {
 	function getUserMedia(dictionary, callback, error)
 	{
 	  try {
-	    navigator.getUserMedia = 
+	    navigator.getUserMedia =
 	    navigator.getUserMedia ||
 	    navigator.webkitGetUserMedia ||
 	    navigator.mozGetUserMedia;
@@ -210,7 +210,16 @@ module.exports = function whistlerr(whistleCallback, config) {
 				whistleCallback({
 					ratio: ratio,
           jDiff: jDiff,
-          sumAmp: sumAmplitudes
+          sumAmp: sumAmplitudes,
+          totalSamples: totalSamples,
+          positiveSamples: positiveSamples,
+          normData: normData,
+          fft: fft,
+          // pbp: pbp,
+          // pbs: pbs,
+          maxpbp: maxpbp,
+          minpbp: minpbp,
+          //i: i
 				});
 		 	}
 		}
