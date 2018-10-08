@@ -208,8 +208,8 @@ module.exports = function whistlerr(whistleCallback, config) {
 
 		 	if( positiveSamples > config.sampleThreshold ) {
 				whistleCallback({
-					ratio: ratio,
-          jDiff: jDiff,
+					//ratio: ratio,
+          //jDiff: jDiff,
           fft: fft
 				});
 		 	}

@@ -6,41 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js'></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-        body {
-            background: linear-gradient(#B066FE,#63E2FF);
-            color: #FFF;
-            font-family: 'Lato', sans-serif;
-            /* height: 9000px; */
-        }
-
-        h1 {
-            padding: 150px 0px 20px 0px;
-        }
-
-        p {
-            font-size: 15px;
-        }
-        #wroll-container {
-            height: 300px;
-            position: relative;
-            border: 1px solid white;
-        }
-        #wroll-floater {
-            height: 30px;
-            width: 30px;
-            background-color: red;
-
-            position: absolute;
-            top: 50%;
-        }
-        .block {
-            height: 500px;
-            border: 1px solid white;
-            background: linear-gradient(#B066FE55,#63E2FF55);
-        }
-    </style>
+    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
+    <link rel="stylesheet" href="src/whistleroll.css">
     <script type="text/javascript" src="build/whistle.build.js"></script>
 </head>
 
@@ -50,137 +19,93 @@
             <div class="col-sm-6">
                 <h1> Whistleroll</h1>
                 <p>Permit the microphone request. Then whistle pitching downwards. <a href="https://github.com/Knogobert/whistleroll">Github Source</a></p>
-                <label for="scrollRelativity">Scroll relative to scrolled position?</label>
-                <input type="checkbox" id="scrollRelativity" name="scrollRelativity" checked>
+
+                <form class="my-5">
+                    <h2>Options</h2>
+                    <div class="form-group">
+                        <label for="scrollRelativity">Scroll behavior compared to scrolled position</label>
+                        <!-- <input type="checkbox" id="scrollRelativity" name="scrollRelativity" checked> -->
+
+                        <div id="scrollRelativity" class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="scrollRelativity" id="scrollRelativity-1" autocomplete="off" checked> Relative
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="scrollRelativity" id="scrollRelativity-2" autocomplete="off"> Absolute
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scrollLength">The amount of pixels to scroll on every match.</label>
+                        <input type="number" id="scrollLength" name="scrollLength" class="form-control" value="300">
+                    </div>
+                </form>
+
             </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
             <div id="wroll-container" class="col">
                 <div id="wroll-floater"></div>
             </div>
-        </div>
+        </div> -->
 
         <div class="container">
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
             <div class="row">
-                <div class="col block"></div>
+                <div class="col block"><h3>Scrolling...</h3></div>
             </div>
         </div>
 
-        <script>
+        <!-- <script>
             window.scroll({
                 top: 0,
                 behavior: "smooth"
             });
-
-            let peakee = 0;
-            let floater = document.querySelector('#wroll-floater');
-            let scrollRelativity = document.querySelector('#scrollRelativity');
-            let scrollHeight = window.scrollY;
-            let config = {
-                sampleThreshold: 8
-            };
-
-            const getScroll = (peakBand) => {
-                // console.log('peakBand', peakBand);
-                // console.log('peakee', peakee);
-                let direction = 0;
-
-                // TODO: Take out the difference between peakee and peakBand and return a percentage of how much to scroll in either direction.
-                if (peakBand < peakee) {
-                    console.log('down '+peakBand+' < '+peakee);
-                    direction = -1;
-                    peakee = peakBand;
-                }else if (peakBand > peakee){
-                    console.log('up ' + peakBand + ' > ' + peakee);
-                    direction = 1;
-                    peakee = peakBand;
-                }else{
-                    console.log('SAME '+peakBand+' > '+peakee);
-                }
-
-                return direction;
-            };
-
-            // Whistle detected and fired
-            whistlerr( (result) => {
-                let theScrollDirection = null;
-
-                // TODO: Add absolute scroll control, for real, absolute in the way that it is always compared to current body height u kno.
-                if (scrollRelativity.checked === true) {
-                    theScrollDirection = getScroll(result.fft.getBandFrequency(result.fft.peakBand));
-                }else{
-                    theScrollDirection = getScroll(result.fft.getBandFrequency(result.fft.peakBand));
-                }
-
-                switch (theScrollDirection) {
-                    case 1:
-                        //floater.style.top = (Number(floater.style.top.slice(0,-1)) - 10) + '%';
-                        scrollHeight -= 300;
-                        console.log('scrollHeight', scrollHeight);
-                        break;
-                    case -1:
-                        //floater.style.top = (Number(floater.style.top.slice(0, -1)) + 10) + '%';
-                        scrollHeight += 300;
-                        console.log('scrollHeight', scrollHeight);
-                        break;
-
-                    default:
-                        break;
-                }
-
-                window.scroll({
-                    top: scrollHeight,
-                    behavior: "smooth"
-                });
-                // var containerWidth = demo.container.offsetWidth;
-                // var containerHeight = demo.container.offsetHeight;
-
-                // demo.spawn((Math.random() * 10000) % containerWidth, (Math.random() * 10000) % containerHeight);
-            }, config);
         </script>
+        <script src="src/whistleroll.js"></script> -->
     </div>
 </body>
 

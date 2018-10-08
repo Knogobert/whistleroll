@@ -2,9 +2,18 @@
 
 # Whistleroll
 
-Scroll by whistling.
+Scroll by whistling. Original idea by [Jacob Rudenstam](https://github.com/jrudenstam/).
 
 Uses [Whistlerr by Shubhamajain](http://shubhamjain.github.io/whistlerr/)
+
+## TODO
+
+- [] Add absolute scroll support
+- [] Add whistle indicator, including direction
+- [] Add nanobar for scroll
+- [] Add reconnection for audio listening
+- [] Clean up the code and workspace a tonne
+- [] Build basic extension
 
 ## Whistlerr
 
