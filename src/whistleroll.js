@@ -1,5 +1,5 @@
 const config = {
-    sampleThreshold: 8
+    sampleThreshold: 2
 };
 const floater = document.querySelector('#wroll-floater');
 const scrollRelativity = document.querySelector('#scrollRelativity input[checked]');
@@ -12,16 +12,17 @@ const getScroll = (peakBand) => {
     let direction = 0;
 
     // TODO: Take out the difference between peakee and peakBand and return a percentage of how much to scroll in either direction.
-    if (peakBand < peakee) {
-        console.log('down '+peakBand+' < '+peakee);
-        direction = -1;
-        peakee = peakBand;
-    }else if (peakBand > peakee){
-        console.log('up ' + peakBand + ' > ' + peakee);
+    if (peakBand > peakee) {
+        console.log('up '+peakBand+' > '+peakee);
         direction = 1;
         peakee = peakBand;
+    }else if (peakBand < peakee){
+        console.log('down ' + peakBand + ' < ' + peakee);
+        direction = -1;
+        peakee = peakBand;
     }else{
-        console.log('SAME '+peakBand+' > '+peakee);
+        console.log('SAME '+peakBand+' == '+peakee);
+
     }
 
     return direction;
@@ -58,7 +59,7 @@ whistlerr( (result) => {
 
     window.scroll({
         top: scrollHeight,
-        behavior: "smooth"
+        behavior: "instant"
     });
     // var containerWidth = demo.container.offsetWidth;
     // var containerHeight = demo.container.offsetHeight;
