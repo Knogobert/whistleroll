@@ -10,10 +10,12 @@ Uses [Whistlerr by Shubhamajain](http://shubhamjain.github.io/whistlerr/).
 
 - [] Add absolute scroll support
 - [] Add whistle indicator, including direction
+- [X] Add a way to change the whistleScrollAmount in a setting
+- [] Add a comparison for the else case "SAME" that continues the last headed direction
 - [] Add [nanobar](http://nanobar.jacoborus.codes/) for scroll
 - [] Add reconnection for audio listening
 - [] Clean up the code and workspace a tonne
-- [] Build basic extension
+- [] Build a basic chrome extension
 
 ## Whistlerr
 

@@ -58,3 +58,16 @@ a:hover {
     justify-content: center;
     align-items: center;
 }
+
+.form-group label {
+    font-weight: 700;
+}
+.form-group label span {
+    font-weight: 400;
+}
+.form-group label span:before {
+    content: ' — ';
+}
+.form-group label ~ div {
+    display: table;
+}
