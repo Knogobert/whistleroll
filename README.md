@@ -6,6 +6,8 @@ Scroll by whistling. Original idea by [Jacob Rudenstam](https://github.com/jrude
 
 Uses [Whistlerr by Shubhamajain](http://shubhamjain.github.io/whistlerr/).
 
+Open up `index.html` and allow the microphone to be heard in the browser. Then whistle!
+
 ## TODO
 
 - [] Add absolute scroll support
