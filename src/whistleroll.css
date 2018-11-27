@@ -71,3 +71,9 @@ a:hover {
 .form-group label ~ div {
     display: table;
 }
+
+.nanobar .bar {
+    background: var(--secondaryColor);
+    border-radius: 4px;
+    box-shadow: 0 0 10px var(--primaryColor);
+}

@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    /*
+    *   Initializations
+    */
+    // Add a scrollindicator as a loader via nanobar.js
+    const nanobar = new Nanobar({ id: "progress-bar"});
+
     const config = {
         sampleThreshold: 2
     };
@@ -15,11 +21,19 @@ document.addEventListener("DOMContentLoaded", function () {
     let whistleScrollAmount = scrollLengthValue !== null ? Number(scrollLengthValue) : 300;
     let invertScroll = -1;
 
-    // Event listeners
+    const progressBar = document.querySelector('#progress-bar');
+
+    /*
+    *   Event listeners
+    */
     for(let i = 0; i < scrollRelativity.length; i++){
         scrollRelativity[i].addEventListener('change', function () {
             console.log("Value: " + this.value);
             scrollRelativityValue = this.value;
+            for( let j = 0; j < this.parentElement.parentElement.children.length; j++){
+                this.parentElement.parentElement.children[j].classList.remove('active');
+            }
+            this.parentElement.classList.add('active');
         }, false);
     }
 
@@ -27,6 +41,10 @@ document.addEventListener("DOMContentLoaded", function () {
         scrollBehavior[i].addEventListener('change', function () {
             console.log("Value: " + this.value);
             scrollBehaviorValue = this.value;
+            for (let j = 0; j < this.parentElement.parentElement.children.length; j++) {
+                this.parentElement.parentElement.children[j].classList.remove('active');
+            }
+            this.parentElement.classList.add('active');
         }, false);
     }
 
@@ -34,6 +52,23 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         whistleScrollAmount = Number(event.target.value);
     }, false);
+
+    //document.body.addEventListener("scroll", updateprogressBar);
+    document.addEventListener('scroll', function () {
+        let scroll = (document.documentElement['scrollTop'] || document.body['scrollTop']) / ((document.documentElement['scrollHeight'] || document.body['scrollHeight']) - document.documentElement.clientHeight) * 100;
+        progressBar.style.setProperty('--scroll', scroll + '%');
+        nanobar.go(scroll);
+    });
+
+
+    /*
+    *   Functions
+    */
+    // function updateNanobar() {
+    //     let absoluteHeight = document.documentElement.scrollTop || document.body.scrollTop;
+    //     let windowHeight = document.body.scrollHeight;
+    //     nanobar.go( (absoluteHeight / windowHeight) * 100 );
+    // }
 
     // What to return on a relative scroll
     const getRelativeScroll = (peakBand) => {
@@ -67,14 +102,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log(`${whistleFloor} HZ < ${whistleFrequency} HZ < ${whistleRoof} HZ`);
         console.log(`Absolute scroll at: ${Math.round(whistlePercentage * 100)}%`);
+        nanobar.go(whistlePercentage * 100);
         return whistlePercentage * windowHeight;
     };
 
-    // Whistle detected and fired
+    /*
+    *   Main
+    */
     whistlerr( (result) => {
+        // Whistle detected and fired
         let theScrollDirection = null;
 
-        // TODO: Add absolute scroll control, for real, absolute in the way that it is always compared to current body height u kno.
         if (scrollRelativityValue === "relative") {
             // * Relative scroll
             theScrollDirection = getRelativeScroll(result.fft.getBandFrequency(result.fft.peakBand));
@@ -100,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log('scrollHeight', scrollHeight);
         }
 
+        //updateNanobar();
 
         window.scroll({
             top: scrollHeight,
@@ -109,5 +148,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // var containerHeight = demo.container.offsetHeight;
 
         // demo.spawn((Math.random() * 10000) % containerWidth, (Math.random() * 10000) % containerHeight);
+
     }, config);
 });

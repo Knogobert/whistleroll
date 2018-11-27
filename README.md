@@ -14,7 +14,7 @@ Open up `index.html` and allow the microphone to be heard in the browser. Then w
 - [ ] Add whistle indicator, including direction
 - [X] Add a way to change the whistleScrollAmount in a setting
 - [ ] Add a comparison for the else case "SAME" that continues the last headed direction
-- [ ] Add [nanobar](http://nanobar.jacoborus.codes/) for scroll
+- [X] Add [nanobar](http://nanobar.jacoborus.codes/) for scroll
 - [ ] Add reconnection for audio listening
 - [ ] Clean up the code and workspace a tonne
 - [ ] Build a basic chrome extension
