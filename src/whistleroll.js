@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let scrollLength = document.querySelector('#scrollLength');
     let scrollLengthValue = scrollLength.value;
     let whistleScrollAmount = scrollLengthValue !== null ? Number(scrollLengthValue) : 300;
+    let invertScroll = -1;
 
     // Event listeners
     for(let i = 0; i < scrollRelativity.length; i++){
@@ -55,6 +56,20 @@ document.addEventListener("DOMContentLoaded", function () {
         return direction;
     };
 
+    // What to return on a absolute scroll
+    const getAbsoluteScroll = (peakBand) => {
+        //let absoluteHeight = document.documentElement.scrollTop || document.body.scrollTop;
+        let whistleRoof = 2000; // Maximum HZ to use as an absolute roof
+        let whistleFloor = 600; // Minimum HZ to use as an absolute floor
+        let whistleFrequency = Math.round( peakBand );
+        let whistlePercentage = ( whistleFrequency - whistleFloor) * 1 / ( whistleRoof - whistleFloor );
+        let windowHeight = document.body.scrollHeight;
+
+        console.log(`${whistleFloor} HZ < ${whistleFrequency} HZ < ${whistleRoof} HZ`);
+        console.log(`Absolute scroll at: ${Math.round(whistlePercentage * 100)}%`);
+        return whistlePercentage * windowHeight;
+    };
+
     // Whistle detected and fired
     whistlerr( (result) => {
         let theScrollDirection = null;
@@ -63,26 +78,28 @@ document.addEventListener("DOMContentLoaded", function () {
         if (scrollRelativityValue === "relative") {
             // * Relative scroll
             theScrollDirection = getRelativeScroll(result.fft.getBandFrequency(result.fft.peakBand));
+
+            switch (theScrollDirection) {
+                case 1:
+                    //floater.style.top = (Number(floater.style.top.slice(0,-1)) - 10) + '%';
+                    scrollHeight -= whistleScrollAmount;
+                    console.log('scrollHeight', scrollHeight);
+                    break;
+                case -1:
+                    //floater.style.top = (Number(floater.style.top.slice(0, -1)) + 10) + '%';
+                    scrollHeight += whistleScrollAmount;
+                    console.log('scrollHeight', scrollHeight);
+                    break;
+
+                default:
+                    break;
+            }
         }else{
             // * Absolute scroll
-            theScrollDirection = getRelativeScroll(result.fft.getBandFrequency(result.fft.peakBand));
+            scrollHeight = getAbsoluteScroll(result.fft.getBandFrequency(result.fft.peakBand));
+            console.log('scrollHeight', scrollHeight);
         }
 
-        switch (theScrollDirection) {
-            case 1:
-                //floater.style.top = (Number(floater.style.top.slice(0,-1)) - 10) + '%';
-                scrollHeight -= whistleScrollAmount;
-                console.log('scrollHeight', scrollHeight);
-                break;
-            case -1:
-                //floater.style.top = (Number(floater.style.top.slice(0, -1)) + 10) + '%';
-                scrollHeight += whistleScrollAmount;
-                console.log('scrollHeight', scrollHeight);
-                break;
-
-            default:
-                break;
-        }
 
         window.scroll({
             top: scrollHeight,
