@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const scrollRelativity = document.querySelectorAll('#scrollRelativity input[name=scrollRelativity]');
     const scrollBehavior = document.querySelectorAll('#scrollBehavior input[name=scrollBehavior]');
     let lastPeakBand = 0;
-    let scrollHeight = window.scrollY;
+    let relScrollHeight = window.scrollY;
+    let absScrollHeight = window.scrollY;
     let scrollRelativityValue = "relative";
     let scrollBehaviorValue = "smooth";
     let scrollLength = document.querySelector('#scrollLength');
@@ -109,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             nanobar.go(whistlePercentage * 100);
             return whistlePercentage * windowHeight;
         }
+        return null;
     };
 
     /*
@@ -117,7 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
     whistlerr( (result) => {
         // Whistle detected and fired
         let theScrollDirection = null;
-        scrollHeight = window.scrollY;
+        relScrollHeight = window.scrollY;
+        absScrollHeight = window.scrollY;
 
         if (scrollRelativityValue === "relative") {
             // * Relative scroll
@@ -126,29 +129,37 @@ document.addEventListener("DOMContentLoaded", function () {
             switch (theScrollDirection) {
                 case 1:
                     //floater.style.top = (Number(floater.style.top.slice(0,-1)) - 10) + '%';
-                    scrollHeight -= whistleScrollAmount;
+                    relScrollHeight -= whistleScrollAmount;
                     break;
                 case -1:
                     //floater.style.top = (Number(floater.style.top.slice(0, -1)) + 10) + '%';
-                    scrollHeight += whistleScrollAmount;
+                    relScrollHeight += whistleScrollAmount;
                     break;
 
                 default:
                     break;
             }
-            console.log('\tscrollHeight\t', scrollHeight);
+            console.log('\trelScrollHeight\t', relScrollHeight);
+
+            window.scroll({
+                top: relScrollHeight,
+                behavior: scrollBehaviorValue
+            });
         }else{
             // * Absolute scroll
-            scrollHeight = getAbsoluteScroll(result.fft.getBandFrequency(result.fft.peakBand));
-            console.log('scrollHeight', scrollHeight);
+            let absScrollHeight = getAbsoluteScroll(result.fft.getBandFrequency(result.fft.peakBand));
+            console.log('\tabsScrollHeight\t', absScrollHeight);
+
+            if (Math.round(absScrollHeight) !== absScrollHeight && absScrollHeight !== null) {
+                window.scroll({
+                    top: absScrollHeight,
+                    behavior: scrollBehaviorValue
+                });
+            }
         }
 
         //updateNanobar();
 
-        window.scroll({
-            top: scrollHeight,
-            behavior: scrollBehaviorValue
-        });
         // var containerWidth = demo.container.offsetWidth;
         // var containerHeight = demo.container.offsetHeight;
 

@@ -109,6 +109,22 @@ module.exports = function whistlerr(whistleCallback, config) {
 	config = Object.assign({}, defaultConfig, config)
 
   var audioContext = new AudioContext();
+  var accessMessageEl = document.createElement('small');
+
+  function showAccessMessage(msg, enabledAccess) {
+    msg = typeof msg !== 'undefined' ? msg : '';
+    enabledAccess = typeof enabledAccess !== 'undefined' ? enabledAccess : false;
+    accessMessageEl.innerHTML = '';
+    if(enabledAccess){
+      accessMessageEl.classList.remove('disabled');
+      accessMessageEl.classList.add('enabled');
+    }else{
+      accessMessageEl.classList.remove('enabled');
+      accessMessageEl.classList.add('disabled');
+    }
+    accessMessageEl.appendChild(document.createTextNode(msg));
+    activateAccessBtn.parentNode.insertBefore(accessMessageEl, activateAccessBtn.nextSibling);
+  }
 
 	// getUserMedia is prefixed a little differently in various browsers. handle these
 	function getUserMedia(dictionary, callback, error)
@@ -123,11 +139,14 @@ module.exports = function whistlerr(whistleCallback, config) {
       console.log('Asking for microphone access.');
 	  } catch (e) {
 	    alert('getUserMedia threw exception :' + e);
-	  }
+    }
 	}
 
 	function gotStream(stream)
 	{
+    console.log('Microphone access granted by user.');
+    showAccessMessage('Microphone access granted by user.', true);
+
 		// Create an AudioNode from the stream.
 		var mediaStreamSource = audioContext.createMediaStreamSource(stream);
 		// Connect it to the destination.
@@ -154,19 +173,17 @@ module.exports = function whistlerr(whistleCallback, config) {
     });
   });
 
-  runAccess(audioContext);
+  //runAccess(audioContext);
 
   function runAccess(audioCtx) {
     if (!config.analyser) {
       console.log('Running function to grant microphone access.');
 
-      if(audioCtx.state === 'running') {
+      if (audioCtx.state === 'running' || audioCtx.state === 'suspended') {
         getUserMedia({ audio: true, video: false }, gotStream, function(){
-          alert('Microphone access denied by user.');
-        });
-      } else if(audioCtx.state === 'suspended') {
-        audioCtx.resume().then(function() {
-          console.log('Microphone access resumed successfully');
+          console.error('Microphone access denied by user.');
+          //alert('Microphone access denied by user.');
+          showAccessMessage('Microphone access denied by user.', false);
         });
       }
     } else {

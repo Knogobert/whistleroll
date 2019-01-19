@@ -38,6 +38,20 @@ a:hover {
     text-decoration: none;
 }
 
+.btn + small {
+    margin: 1rem 0;
+    display: block;
+    border-left: 3px solid #fff;
+    padding-left: 1rem;
+    border-radius: 2px;
+}
+small.enabled {
+    border-left-color: #9DFFB5;
+}
+small.disabled {
+    border-left-color: #802E67;
+}
+
 #wroll-container {
     height: 300px;
     position: relative;
