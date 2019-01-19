@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     */
     for(let i = 0; i < scrollRelativity.length; i++){
         scrollRelativity[i].addEventListener('change', function () {
-            console.log("Value: " + this.value);
+            console.log((this.parentElement.parentElement.getAttribute('data-label') !== null ? this.parentElement.parentElement.getAttribute('data-label') : 'Changed to' ) + ": " + this.value);
             scrollRelativityValue = this.value;
             for( let j = 0; j < this.parentElement.parentElement.children.length; j++){
                 this.parentElement.parentElement.children[j].classList.remove('active');
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     for(let i = 0; i < scrollBehavior.length; i++){
         scrollBehavior[i].addEventListener('change', function () {
-            console.log("Value: " + this.value);
+            console.log((this.parentElement.parentElement.getAttribute('data-label') !== null ? this.parentElement.parentElement.getAttribute('data-label') : 'Changed to') + ": " + this.value);
             scrollBehaviorValue = this.value;
             for (let j = 0; j < this.parentElement.parentElement.children.length; j++) {
                 this.parentElement.parentElement.children[j].classList.remove('active');
@@ -48,8 +48,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }, false);
     }
 
-    scrollLength.addEventListener('blur', function (event) {
+    scrollLength.addEventListener('input', function (event) {
         event.preventDefault();
+        console.log((event.target.getAttribute('data-label') !== null ? event.target.getAttribute('data-label') : 'Changed to') + ": " + event.target.value);
         whistleScrollAmount = Number(event.target.value);
     }, false);
 
@@ -75,16 +76,18 @@ document.addEventListener("DOMContentLoaded", function () {
         let direction = 0;
 
         // TODO: Take out the difference between lastPeakBand and peakBand and return a percentage of how much to scroll in either direction.
-        if (peakBand > lastPeakBand) {
-            console.log('up '+peakBand+' > '+lastPeakBand);
+        if (Math.round(peakBand) === 43){
+            console.log('⤃\tbackground noise detected.');
+        }else if (peakBand > lastPeakBand) {
+            console.log('↑\tup\t' + peakBand +'\t>\t'+lastPeakBand);
             direction = 1;
             lastPeakBand = peakBand;
         }else if (peakBand < lastPeakBand){
-            console.log('down ' + peakBand + ' < ' + lastPeakBand);
+            console.log('↓\tdown\t' + peakBand + '\t<\t' + lastPeakBand);
             direction = -1;
             lastPeakBand = peakBand;
         }else{
-            console.log('SAME '+peakBand+' == '+lastPeakBand);
+            console.log('↔︎\tsame\t' + peakBand +'\t==\t'+lastPeakBand);
             // TODO: Keep the latest direction going on a match.
         }
 
@@ -100,10 +103,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let whistlePercentage = ( whistleFrequency - whistleFloor) * 1 / ( whistleRoof - whistleFloor );
         let windowHeight = document.body.scrollHeight;
 
-        console.log(`${whistleFloor} HZ < ${whistleFrequency} HZ < ${whistleRoof} HZ`);
-        console.log(`Absolute scroll at: ${Math.round(whistlePercentage * 100)}%`);
-        nanobar.go(whistlePercentage * 100);
-        return whistlePercentage * windowHeight;
+        if (whistleFloor < whistleFrequency && whistleFrequency < whistleRoof){
+            console.log(`${whistleFloor} HZ < ${whistleFrequency} HZ < ${whistleRoof} HZ`);
+            console.log(`\tAbsolute scroll at:\t${Math.round(whistlePercentage * 100)}%`);
+            nanobar.go(whistlePercentage * 100);
+            return whistlePercentage * windowHeight;
+        }
     };
 
     /*
@@ -112,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
     whistlerr( (result) => {
         // Whistle detected and fired
         let theScrollDirection = null;
+        scrollHeight = window.scrollY;
 
         if (scrollRelativityValue === "relative") {
             // * Relative scroll
@@ -121,17 +127,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 case 1:
                     //floater.style.top = (Number(floater.style.top.slice(0,-1)) - 10) + '%';
                     scrollHeight -= whistleScrollAmount;
-                    console.log('scrollHeight', scrollHeight);
                     break;
                 case -1:
                     //floater.style.top = (Number(floater.style.top.slice(0, -1)) + 10) + '%';
                     scrollHeight += whistleScrollAmount;
-                    console.log('scrollHeight', scrollHeight);
                     break;
 
                 default:
                     break;
             }
+            console.log('\tscrollHeight\t', scrollHeight);
         }else{
             // * Absolute scroll
             scrollHeight = getAbsoluteScroll(result.fft.getBandFrequency(result.fft.peakBand));
