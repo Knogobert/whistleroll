@@ -71,6 +71,9 @@ a:hover {
 .form-group label ~ div {
     display: table;
 }
+.form-group input[type="number"] {
+    max-width: 500px;
+}
 
 .nanobar .bar {
     background: var(--secondaryColor);

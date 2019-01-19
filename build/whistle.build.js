@@ -93,7 +93,8 @@ var defaultConfig = {
 	jDiffThreshold : 0.45,   // Jensen Difference Threshold
 	whistleBlockThreshold : 25, // Ratio of bandpass and bandstop blocks for 500-5000Hz
 
-	sampleThreshold : 10 // Threshold for postive samples / 50 samples
+  sampleThreshold : 10, // Threshold for postive samples / 50 samples
+  activateAudioContextButtonId: 'activateAudioContext' // ID for HTML button that requests access for the AudioContext
 };
 
 
@@ -107,7 +108,7 @@ module.exports = function whistlerr(whistleCallback, config) {
 	// fill in all omitted config parameters with default values
 	config = Object.assign({}, defaultConfig, config)
 
-	var audioContext
+  var audioContext = new AudioContext();
 
 	// getUserMedia is prefixed a little differently in various browsers. handle these
 	function getUserMedia(dictionary, callback, error)
@@ -116,8 +117,10 @@ module.exports = function whistlerr(whistleCallback, config) {
 	    navigator.getUserMedia =
 	    navigator.getUserMedia ||
 	    navigator.webkitGetUserMedia ||
-	    navigator.mozGetUserMedia;
-	    navigator.getUserMedia(dictionary, callback, error);
+      navigator.mozGetUserMedia ||
+      navigator.mediaDevices.getUserMedia;
+      navigator.getUserMedia(dictionary, callback, error);
+      console.log('Asking for microphone access.');
 	  } catch (e) {
 	    alert('getUserMedia threw exception :' + e);
 	  }
@@ -140,16 +143,37 @@ module.exports = function whistlerr(whistleCallback, config) {
 	var totalSamples = 0, positiveSamples = 0,
 		normData, fft, pbp,
 		pbs, maxpbp, sumAmplitudes,
-		minpbp, ratio, jDiff, i;
+    minpbp, ratio, jDiff, i;
 
-	if (!config.analyser) {
-		audioContext = new AudioContext();
-		getUserMedia({ audio: true, video: false }, gotStream, function(){
-			alert('There was an error accessing audio input. Please check.');
-		});
-	} else {
-		whistleFinder();
-	}
+  // For resuming playback when user interacted with the page.
+  // https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+  var activateAccessBtn = document.getElementById(config.activateAudioContextButtonId);
+  activateAccessBtn.addEventListener('click', function () {
+    audioContext.resume().then(() => {
+      runAccess(audioContext);
+    });
+  });
+
+  runAccess(audioContext);
+
+  function runAccess(audioCtx) {
+    if (!config.analyser) {
+      console.log('Running function to grant microphone access.');
+
+      if(audioCtx.state === 'running') {
+        getUserMedia({ audio: true, video: false }, gotStream, function(){
+          alert('Microphone access denied by user.');
+        });
+      } else if(audioCtx.state === 'suspended') {
+        audioCtx.resume().then(function() {
+          console.log('Microphone access resumed successfully');
+        });
+      }
+    } else {
+      console.log('Already have granted microphone access.');
+      whistleFinder();
+    }
+  }
 
 	function whistleFinder() {
 		config.analyser.getByteTimeDomainData(timeBuf);
