@@ -12,15 +12,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const floater = document.querySelector('#wroll-floater');
     const scrollRelativity = document.querySelectorAll('#scrollRelativity input[name=scrollRelativity]');
     const scrollBehavior = document.querySelectorAll('#scrollBehavior input[name=scrollBehavior]');
+    const scrollInversion = document.querySelectorAll('#scrollInversion input[name=scrollInversion]');
     let lastPeakBand = 0;
     let relScrollHeight = window.scrollY;
     let absScrollHeight = window.scrollY;
     let scrollRelativityValue = "relative";
     let scrollBehaviorValue = "smooth";
+    let scrollInversionValue = "regular";
     let scrollLength = document.querySelector('#scrollLength');
     let scrollLengthValue = scrollLength.value;
     let whistleScrollAmount = scrollLengthValue !== null ? Number(scrollLengthValue) : 300;
-    let invertScroll = -1;
+    let whistleRoof = 1950; // Maximum HZ to use as an absolute roof
+    let whistleFloor = 600; // Minimum HZ to use as an absolute floor
+    let scrollInversionVal = -1;
 
     const progressBar = document.querySelector('#progress-bar');
 
@@ -48,6 +52,21 @@ document.addEventListener("DOMContentLoaded", function () {
             this.parentElement.classList.add('active');
         }, false);
     }
+
+    // for(let i = 0; i < scrollInversion.length; i++){
+    //     scrollInversion[i].addEventListener('change', function () {
+    //         console.log((this.parentElement.parentElement.getAttribute('data-label') !== null ? this.parentElement.parentElement.getAttribute('data-label') : 'Changed to') + ": " + this.value);
+    //         if (this.value === "inverted") {
+    //             scrollInversionVal = -1;
+    //         }else {
+    //             scrollInversionVal = 1;
+    //         }
+    //         for (let j = 0; j < this.parentElement.parentElement.children.length; j++) {
+    //             this.parentElement.parentElement.children[j].classList.remove('active');
+    //         }
+    //         this.parentElement.classList.add('active');
+    //     }, false);
+    // }
 
     scrollLength.addEventListener('input', function (event) {
         event.preventDefault();
@@ -81,11 +100,11 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log('⤃\tbackground noise detected.');
         }else if (peakBand > lastPeakBand) {
             console.log('↑\tup\t' + peakBand +'\t>\t'+lastPeakBand);
-            direction = 1;
+            direction = 1 * scrollInversionVal;
             lastPeakBand = peakBand;
         }else if (peakBand < lastPeakBand){
             console.log('↓\tdown\t' + peakBand + '\t<\t' + lastPeakBand);
-            direction = -1;
+            direction = -1 * scrollInversionVal;
             lastPeakBand = peakBand;
         }else{
             console.log('↔︎\tsame\t' + peakBand +'\t==\t'+lastPeakBand);
@@ -98,16 +117,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // What to return on a absolute scroll
     const getAbsoluteScroll = (peakBand) => {
         //let absoluteHeight = document.documentElement.scrollTop || document.body.scrollTop;
-        let whistleRoof = 2000; // Maximum HZ to use as an absolute roof
-        let whistleFloor = 600; // Minimum HZ to use as an absolute floor
         let whistleFrequency = Math.round( peakBand );
-        let whistlePercentage = ( whistleFrequency - whistleFloor) * 1 / ( whistleRoof - whistleFloor );
+        let whistlePercentage = (((whistleFrequency - whistleFloor) / (whistleRoof - whistleFloor)) - 1) * scrollInversionVal;
         let windowHeight = document.body.scrollHeight;
 
         if (whistleFloor < whistleFrequency && whistleFrequency < whistleRoof){
             console.log(`${whistleFloor} HZ < ${whistleFrequency} HZ < ${whistleRoof} HZ`);
             console.log(`\tAbsolute scroll at:\t${Math.round(whistlePercentage * 100)}%`);
-            nanobar.go(whistlePercentage * 100);
             return whistlePercentage * windowHeight;
         }
         return null;
@@ -148,9 +164,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }else{
             // * Absolute scroll
             let absScrollHeight = getAbsoluteScroll(result.fft.getBandFrequency(result.fft.peakBand));
-            console.log('\tabsScrollHeight\t', absScrollHeight);
 
             if (Math.round(absScrollHeight) !== absScrollHeight && absScrollHeight !== null) {
+                console.log('\tabsScrollHeight\t', absScrollHeight);
                 window.scroll({
                     top: absScrollHeight,
                     behavior: scrollBehaviorValue
