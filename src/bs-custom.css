@@ -67,10 +67,10 @@ h1, h2, h3, h4, h5, h6,
     padding: .375rem .75rem;
     font-size: 1rem;
     line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
+    color: #fff;
+    background-color: #49505722;
     background-clip: padding-box;
-    border: 1px solid #ced4da;
+    border: 1px solid transparent;/*#ced4da*/
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let whistleScrollAmount = scrollLengthValue !== null ? Number(scrollLengthValue) : 300;
     let whistleRoof = 1950; // Maximum HZ to use as an absolute roof
     let whistleFloor = 600; // Minimum HZ to use as an absolute floor
-    let scrollInversionVal = -1;
+    let inversionVal = 1;
 
     const progressBar = document.querySelector('#progress-bar');
 
@@ -53,20 +53,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }, false);
     }
 
-    // for(let i = 0; i < scrollInversion.length; i++){
-    //     scrollInversion[i].addEventListener('change', function () {
-    //         console.log((this.parentElement.parentElement.getAttribute('data-label') !== null ? this.parentElement.parentElement.getAttribute('data-label') : 'Changed to') + ": " + this.value);
-    //         if (this.value === "inverted") {
-    //             scrollInversionVal = -1;
-    //         }else {
-    //             scrollInversionVal = 1;
-    //         }
-    //         for (let j = 0; j < this.parentElement.parentElement.children.length; j++) {
-    //             this.parentElement.parentElement.children[j].classList.remove('active');
-    //         }
-    //         this.parentElement.classList.add('active');
-    //     }, false);
-    // }
+    for(let i = 0; i < scrollInversion.length; i++){
+        scrollInversion[i].addEventListener('change', function () {
+            console.log((this.parentElement.parentElement.getAttribute('data-label') !== null ? this.parentElement.parentElement.getAttribute('data-label') : 'Changed to') + ": " + this.value);
+            if (this.value === "inverted") {
+                inversionVal = -1;
+            }else {
+                inversionVal = 1;
+            }
+            for (let j = 0; j < this.parentElement.parentElement.children.length; j++) {
+                this.parentElement.parentElement.children[j].classList.remove('active');
+            }
+            this.parentElement.classList.add('active');
+        }, false);
+    }
 
     scrollLength.addEventListener('input', function (event) {
         event.preventDefault();
@@ -100,11 +100,11 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log('⤃\tbackground noise detected.');
         }else if (peakBand > lastPeakBand) {
             console.log('↑\tup\t' + peakBand +'\t>\t'+lastPeakBand);
-            direction = 1 * scrollInversionVal;
+            direction = 1 * inversionVal;
             lastPeakBand = peakBand;
         }else if (peakBand < lastPeakBand){
             console.log('↓\tdown\t' + peakBand + '\t<\t' + lastPeakBand);
-            direction = -1 * scrollInversionVal;
+            direction = -1 * inversionVal;
             lastPeakBand = peakBand;
         }else{
             console.log('↔︎\tsame\t' + peakBand +'\t==\t'+lastPeakBand);
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const getAbsoluteScroll = (peakBand) => {
         //let absoluteHeight = document.documentElement.scrollTop || document.body.scrollTop;
         let whistleFrequency = Math.round( peakBand );
-        let whistlePercentage = (((whistleFrequency - whistleFloor) / (whistleRoof - whistleFloor)) - 1) * scrollInversionVal;
+        let whistlePercentage = ( inversionVal === 1 ? (((whistleFrequency - whistleFloor) / (whistleRoof - whistleFloor)) - 1) * -1 : (((whistleFrequency - whistleFloor) / (whistleRoof - whistleFloor))) );
         let windowHeight = document.body.scrollHeight;
 
         if (whistleFloor < whistleFrequency && whistleFrequency < whistleRoof){

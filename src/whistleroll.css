@@ -6,7 +6,8 @@
 }
 
 body {
-    background: linear-gradient(#B066FE,#63E2FF);
+    background: #B066FE;
+    background: linear-gradient(#B066FE,#63E2FF) fixed;
     color: #FFF;
     font-family: 'Lato', sans-serif;
     /* height: 9000px; */
@@ -38,6 +39,15 @@ a:hover {
     text-decoration: none;
 }
 
+:focus {
+    outline: 2px dotted #63E2FF;
+    outline: 3px auto #63E2FF;
+}
+button:focus {
+    outline: 2px dotted #63E2FF;
+    outline: 3px auto #63E2FF;
+}
+
 .btn + small {
     margin: 1rem 0;
     display: block;
@@ -47,9 +57,11 @@ a:hover {
 }
 small.enabled {
     border-left-color: #9DFFB5;
+    background: linear-gradient(to right, #9DFFB5 -20rem, #9DFFB500 20rem);
 }
 small.disabled {
     border-left-color: #802E67;
+    background: linear-gradient(to right, #802E67 -20rem, #802E6700 20rem);
 }
 
 #wroll-container {
@@ -70,10 +82,11 @@ small.disabled {
     /* margin-bottom: 1rem; */
     /* border: 1px solid white; */
     background: #B066FE;
-    background: linear-gradient(#B066FE55,#63E2FF55);
+    background: linear-gradient(#63E2FF55, #B066FE55);
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .form-group label {
