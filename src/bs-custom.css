@@ -68,7 +68,7 @@ h1, h2, h3, h4, h5, h6,
     font-size: 1rem;
     line-height: 1.5;
     color: #fff;
-    background-color: #49505722;
+    background-color: #54A9DFAA;/*#49505722;*/
     background-clip: padding-box;
     border: 1px solid transparent;/*#ced4da*/
     border-radius: .25rem;
@@ -109,6 +109,8 @@ h1, h2, h3, h4, h5, h6,
     color: #fff;
     background-color: #54A9DF;
     border-color: #54A9DF;
+    background-color: #54A9DFAA;
+    border-color: #54A9DFAA;
 }
 .btn-primary:hover {
     color: #fff;
@@ -131,6 +133,7 @@ h1, h2, h3, h4, h5, h6,
 }
 .btn-primary:not(:disabled):not(.disabled).active + .btn-primary {
     color: #e6e6e6;
+    color: #fffd;
 }
 .btn-primary:not(:disabled):not(.disabled).active + .btn-primary:hover {
     color: #fff;
