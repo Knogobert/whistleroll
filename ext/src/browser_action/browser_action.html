@@ -1,0 +1,174 @@
+<!doctype html>
+<head>
+	<title>Whistleroll Popup</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet"> -->
+	<script src='../../js/nanobar.min.js'></script>
+	<link rel="stylesheet" href="../../css/reboot.min.css">
+	<link rel="stylesheet" href="../../css/bs-custom.css">
+	<link rel="stylesheet" href="../../css/whistleroll.css">
+	<script type="text/javascript" src="../../js/whistle.build.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col">
+				<h1>Whistleroll Popup</h1>
+				<p>
+					Permit the microphone request. Then whistle pitching downwards.<br />
+					<a href="https://github.com/Knogobert/whistleroll" target="_blank">Github Source</a>. Original idea by <a href="https://github.com/jrudenstam/"
+					 target="_blank">Jacob Rudenstam</a>.
+				</p>
+				<div class="btn-group">
+					<button id="activateAudioContext" class="btn btn-primary">Request microphone access!</button>
+					<button id="disableAudioContext" class="btn btn-secondary">Disable microphone</button>
+				</div>
+
+				<div id="messageBox"></div>
+
+				<form class="my-5" method="post">
+					<h2>Options</h2>
+					<div class="form-group">
+						<label for="scrollRelativity">Scroll positioning<span>Compared to whistle</span></label>
+
+						<div id="scrollRelativity" class="btn-group btn-group-toggle" data-toggle="buttons" data-label="Scroll positioning">
+							<label class="btn btn-primary active">
+								<input type="radio" name="scrollRelativity" id="scrollRelativity-1" autocomplete="off" value="relative" checked>Relative
+							</label>
+							<label class="btn btn-primary">
+								<input type="radio" name="scrollRelativity" id="scrollRelativity-2" autocomplete="off" value="absolute">Absolute
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="scrollBehavior">Scroll behavior</label>
+
+						<div id="scrollBehavior" class="btn-group btn-group-toggle" data-toggle="buttons" data-label="Scroll behavior">
+							<label class="btn btn-primary active">
+								<input type="radio" name="scrollBehavior" id="scrollBehavior-1" autocomplete="off" value="smooth" checked>Smooth
+							</label>
+							<label class="btn btn-primary">
+								<input type="radio" name="scrollBehavior" id="scrollBehavior-2" autocomplete="off" value="instant">Instant
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="scrollInversion">Inverted scroll</label>
+
+						<div id="scrollInversion" class="btn-group btn-group-toggle" data-toggle="buttons" data-label="Inverted scroll">
+							<label class="btn btn-primary active">
+								<input type="radio" name="scrollInversion" id="scrollInversion-1" autocomplete="off" value="regular" checked>Regular
+							</label>
+							<label class="btn btn-primary">
+								<input type="radio" name="scrollInversion" id="scrollInversion-2" autocomplete="off" value="inverted">Inverted
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="scrollLength">Scroll Length<span>The amount of pixels to scroll on every match.</span></label>
+						<input type="number" id="scrollLength" name="scrollLength" class="form-control" value="300" data-label="Scroll behavior">
+					</div>
+				</form>
+
+			</div>
+		</div>
+
+		<!-- <div class="row">
+            <div id="wroll-container" class="col">
+                <div id="wroll-floater"></div>
+            </div>
+        </div> -->
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 1...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 2...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 3...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 4...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 5...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 6...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 7...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 8...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 9...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 10...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 11...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 12...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 13...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>Scrolling 14...</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col block">
+					<h3>You've reached the end.<br>Good for you.</h3>
+				</div>
+			</div>
+		</div>
+
+		<!-- <script>window.scroll({
+				top: 0,
+				behavior: "smooth",
+			});</script> -->
+		<script src="../../js/whistleroll.js"></script>
+	</div>
+</body>
+
+</html>
