@@ -117,6 +117,18 @@ h1, h2, h3, h4, h5, h6,
     background-color: #59C6E6;
     border-color: #59C6E6;
 }
+.btn-secondary {
+    color: #fff;
+    background-color: #A25BDC;
+    border-color: #A25BDC;
+    background-color: #A25BDCAA;
+    border-color: #A25BDCAA;
+}
+.btn-secondary:hover {
+    color: #fff;
+    background-color: #CD79FF;
+    border-color: #CD79FF;
+}
 .btn:focus, .btn:hover {
     text-decoration: none;
 }

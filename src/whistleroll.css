@@ -1,7 +1,11 @@
 :root {
     --primaryColor: #B066FE;
+    /* --primaryColor-other: #CD79FF;
+    --primaryColor-d1: #A25BDC;
+    --primaryColor-d2: #9150BB; */
     --secondaryColor: #63E2FF;
-    /* --secondaryColor-d1: #59C6E6;
+    /* --secondaryColor-other: #54A9DF;
+    --secondaryColor-d1: #59C6E6;
     --secondaryColor-d2: #4FAACC; */
 }
 
@@ -48,18 +52,25 @@ button:focus {
     outline: 3px auto #63E2FF;
 }
 
-.btn + small {
+#messageBox {
+    min-height: 20px;
     margin: 1rem 0;
+}
+#messageBox small {
     display: block;
     border-left: 3px solid #fff;
     padding-left: 1rem;
     border-radius: 2px;
 }
-small.enabled {
+#messageBox small.enabled {
     border-left-color: #9DFFB5;
     background: linear-gradient(to right, #9DFFB5 -20rem, #9DFFB500 20rem);
 }
-small.disabled {
+#messageBox small.disabled {
+    border-left-color: #F96D41;
+    background: linear-gradient(to right, #F96D41 -20rem, #802E6700 20rem);
+}
+#messageBox small.denied {
     border-left-color: #802E67;
     background: linear-gradient(to right, #802E67 -20rem, #802E6700 20rem);
 }

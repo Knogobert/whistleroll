@@ -94,7 +94,9 @@ var defaultConfig = {
 	whistleBlockThreshold : 25, // Ratio of bandpass and bandstop blocks for 500-5000Hz
 
   sampleThreshold : 10, // Threshold for postive samples / 50 samples
-  activateAudioContextButtonId: 'activateAudioContext' // ID for HTML button that requests access for the AudioContext
+  activateAudioContextButtonId: 'activateAudioContext', // ID for HTML button that requests access for the AudioContext
+  disableAudioContextButtonId: 'disableAudioContext', // ID for HTML button that disables access for the AudioContext
+  messageBox: 'messageBox' // ID for HTML button that can be used for appending elements with messages
 };
 
 
@@ -109,21 +111,30 @@ module.exports = function whistlerr(whistleCallback, config) {
 	config = Object.assign({}, defaultConfig, config)
 
   var audioContext = new AudioContext();
+  var messageBox = document.getElementById(config.messageBox);
   var accessMessageEl = document.createElement('small');
 
   function showAccessMessage(msg, enabledAccess) {
     msg = typeof msg !== 'undefined' ? msg : '';
     enabledAccess = typeof enabledAccess !== 'undefined' ? enabledAccess : false;
     accessMessageEl.innerHTML = '';
-    if(enabledAccess){
-      accessMessageEl.classList.remove('disabled');
-      accessMessageEl.classList.add('enabled');
-    }else{
-      accessMessageEl.classList.remove('enabled');
-      accessMessageEl.classList.add('disabled');
+    switch (enabledAccess) {
+      case 'enabled':
+        accessMessageEl.classList.remove('enabled', 'disabled');
+        accessMessageEl.classList.add('enabled');
+        break;
+      case 'disabled':
+        accessMessageEl.classList.remove('enabled', 'denied');
+        accessMessageEl.classList.add('disabled');
+        break;
+
+      default:
+        accessMessageEl.classList.remove('enabled', 'disabled');
+        accessMessageEl.classList.add('denied');
+        break;
     }
     accessMessageEl.appendChild(document.createTextNode(msg));
-    activateAccessBtn.parentNode.insertBefore(accessMessageEl, activateAccessBtn.nextSibling);
+    messageBox.appendChild(accessMessageEl);
   }
 
 	// getUserMedia is prefixed a little differently in various browsers. handle these
@@ -145,10 +156,11 @@ module.exports = function whistlerr(whistleCallback, config) {
 	function gotStream(stream)
 	{
     console.log('Microphone access granted by user.');
-    showAccessMessage('Microphone access granted by user.', true);
+    showAccessMessage('Microphone access granted by user.', 'enabled');
 
 		// Create an AudioNode from the stream.
-		var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    window.mediaStreamReference = mediaStreamSource;
 		// Connect it to the destination.
 		config.analyser = audioContext.createAnalyser();
 		config.analyser.fftSize = config.freqBinCount;
@@ -172,11 +184,24 @@ module.exports = function whistlerr(whistleCallback, config) {
       runAccess(audioContext);
     });
   });
+  var disableAccessBtn = document.getElementById(config.disableAudioContextButtonId);
+  disableAccessBtn.addEventListener('click', function () {
+    audioContext.suspend().then(() => {
+      if (!window.mediaStreamReference) return;
+      window.mediaStreamReference.mediaStream.getAudioTracks().forEach(function (track) {
+        track.stop();
+      });
+      window.mediaStreamReference.mediaStream = null;
+
+      console.warn('Microphone access disabled by user.');
+      showAccessMessage('Microphone access disabled by user.', 'disabled');
+    });
+  });
 
   //runAccess(audioContext);
 
   function runAccess(audioCtx) {
-    if (!config.analyser) {
+    if (!config.analyser || window.mediaStreamReference && window.mediaStreamReference.mediaStream.active === false) {
       console.log('Running function to grant microphone access.');
 
       if (audioCtx.state === 'running' || audioCtx.state === 'suspended') {
@@ -188,6 +213,7 @@ module.exports = function whistlerr(whistleCallback, config) {
       }
     } else {
       console.log('Already have granted microphone access.');
+      showAccessMessage('Microphone access already granted by user.', 'enabled');
       whistleFinder();
     }
   }

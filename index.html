@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Whistle Roll</title>
+    <title>Whistleroll</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
@@ -18,12 +18,17 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <h1> Whistleroll</h1>
+                <h1>Whistleroll</h1>
                 <p>
                     Permit the microphone request. Then whistle pitching downwards.<br/>
                     <a href="https://github.com/Knogobert/whistleroll" target="_blank">Github Source</a>. Original idea by <a href="https://github.com/jrudenstam/" target="_blank">Jacob Rudenstam</a>.
                 </p>
-                <button id="activateAudioContext" class="btn btn-primary">Request microphone access!</button>
+                <div class="btn-group">
+                    <button id="activateAudioContext" class="btn btn-primary">Request microphone access!</button>
+                    <button id="disableAudioContext" class="btn btn-secondary">Disable microphone</button>
+                </div>
+
+                <div id="messageBox"></div>
 
                 <form class="my-5" method="post">
                     <h2>Options</h2>
