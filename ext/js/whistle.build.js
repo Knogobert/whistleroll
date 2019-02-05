@@ -114,21 +114,75 @@ module.exports = function whistlerr(whistleCallback, config) {
   var messageBox = document.getElementById(config.messageBox);
   var accessMessageEl = document.createElement('small');
 
+  var timeBuf = new Uint8Array(config.freqBinCount); //time domain data
+  var totalSamples = 0, positiveSamples = 0,
+    normData, fft, pbp,
+    pbs, maxpbp, sumAmplitudes,
+    minpbp, ratio, jDiff, i;
+
+  // For resuming playback when user interacted with the page.
+  // https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+  var activateAccessBtn = document.getElementById(config.activateAudioContextButtonId);
+  activateAccessBtn.addEventListener('click', resumeContext);
+  var disableAccessBtn = document.getElementById(config.disableAudioContextButtonId);
+  disableAccessBtn.addEventListener('click', suspendContext);
+  //document.addEventListener('visibilitychange', windowVisibilityCheck);
+
+  checkPermissions();
+
+  function resumeContext() {
+    audioContext.resume().then(() => {
+      runAccess(audioContext);
+    });
+  }
+
+  function suspendContext() {
+    audioContext.suspend().then(() => {
+      if (!window.wr_mediaStreamReference)
+        return showAccessMessage('Microphone access already disabled.', 'disabled');
+      window.wr_mediaStreamReference.mediaStream.getAudioTracks().forEach(function (track) {
+        track.stop();
+      });
+      window.wr_mediaStreamReference.mediaStream = null;
+
+      showAccessMessage('Microphone access disabled.', 'disabled');
+    });
+  };
+
+  function windowVisibilityCheck() {
+    if (document.hidden) {
+      console.log('document was hidden:', document.hidden)
+      audioContext.suspend();
+    } else {
+      console.log('document is hidden:', document.hidden)
+      audioContext.resume();
+      // TODO: Call the initializing function in the front end script whistleroll.js (whistlerr();)
+      //checkPermissions(resumeContext);
+      // if(permission !== 'granted'){
+      //   resumeContext()
+      //   //whistleFinder();
+      // }
+    }
+  }
+
   function showAccessMessage(msg, enabledAccess) {
     msg = typeof msg !== 'undefined' ? msg : '';
     enabledAccess = typeof enabledAccess !== 'undefined' ? enabledAccess : false;
     accessMessageEl.innerHTML = '';
     switch (enabledAccess) {
       case 'enabled':
+        console.log(msg);
         accessMessageEl.classList.remove('enabled', 'disabled');
         accessMessageEl.classList.add('enabled');
         break;
       case 'disabled':
+        console.warn(msg);
         accessMessageEl.classList.remove('enabled', 'denied');
         accessMessageEl.classList.add('disabled');
         break;
 
       default:
+        console.error(msg);
         accessMessageEl.classList.remove('enabled', 'disabled');
         accessMessageEl.classList.add('denied');
         break;
@@ -137,83 +191,67 @@ module.exports = function whistlerr(whistleCallback, config) {
     messageBox.appendChild(accessMessageEl);
   }
 
-	// getUserMedia is prefixed a little differently in various browsers. handle these
-	function getUserMedia(dictionary, callback, error)
-	{
-	  try {
-	    navigator.getUserMedia =
-	    navigator.getUserMedia ||
-	    navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.mediaDevices.getUserMedia;
+  function checkPermissions(callback) {
+    if (!('permissions' in navigator))
+      return false;
+
+    navigator.permissions.query({ name: 'microphone' })
+      .then((permissionObj) => {
+        if (permissionObj.state == 'granted') {
+          showAccessMessage('Microphone access granted from earlier session.', 'enabled');
+        } else if (permissionObj.state == 'prompt') {
+          showAccessMessage('Microphone access will need to be allowed in prompt after clicking the "Request microphone access!" button above.', 'disabled');
+        }
+        if (typeof callback !== 'undefined')
+          callback();
+        return permissionObj.state;
+      })
+      .catch((error) => {
+        showAccessMessage('Got error: ' + error, 'denied');
+      })
+  }
+
+  // getUserMedia is prefixed a little differently in various browsers. handle these
+  function getUserMedia(dictionary, callback, error) {
+    try {
+      navigator.getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia ||
+        navigator.mediaDevices.getUserMedia;
       navigator.getUserMedia(dictionary, callback, error);
       console.log('Asking for microphone access.');
-	  } catch (e) {
-	    alert('getUserMedia threw exception :' + e);
+    } catch (error) {
+      showAccessMessage('getUserMedia got error: ' + error, 'denied');
     }
-	}
+  }
 
-	function gotStream(stream)
-	{
-    console.log('Microphone access granted by user.');
-    showAccessMessage('Microphone access granted by user.', 'enabled');
+  function gotStream(stream) {
+    showAccessMessage('Microphone access granted.', 'enabled');
 
-		// Create an AudioNode from the stream.
+    // Create an AudioNode from the stream.
     var mediaStreamSource = audioContext.createMediaStreamSource(stream);
-    window.mediaStreamReference = mediaStreamSource;
-		// Connect it to the destination.
-		config.analyser = audioContext.createAnalyser();
-		config.analyser.fftSize = config.freqBinCount;
+    window.wr_mediaStreamReference = mediaStreamSource;
+    // Connect it to the destination.
+    config.analyser = audioContext.createAnalyser();
+    config.analyser.fftSize = config.freqBinCount;
 
-		mediaStreamSource.connect( config.analyser );
-		whistleFinder();
-	}
-
-	var timeBuf = new Uint8Array( config.freqBinCount ); //time domain data
-
-	var totalSamples = 0, positiveSamples = 0,
-		normData, fft, pbp,
-		pbs, maxpbp, sumAmplitudes,
-    minpbp, ratio, jDiff, i;
-
-  // For resuming playback when user interacted with the page.
-  // https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
-  var activateAccessBtn = document.getElementById(config.activateAudioContextButtonId);
-  activateAccessBtn.addEventListener('click', function () {
-    audioContext.resume().then(() => {
-      runAccess(audioContext);
-    });
-  });
-  var disableAccessBtn = document.getElementById(config.disableAudioContextButtonId);
-  disableAccessBtn.addEventListener('click', function () {
-    audioContext.suspend().then(() => {
-      if (!window.mediaStreamReference) return;
-      window.mediaStreamReference.mediaStream.getAudioTracks().forEach(function (track) {
-        track.stop();
-      });
-      window.mediaStreamReference.mediaStream = null;
-
-      console.warn('Microphone access disabled by user.');
-      showAccessMessage('Microphone access disabled by user.', 'disabled');
-    });
-  });
+    mediaStreamSource.connect(config.analyser);
+    whistleFinder();
+  }
 
   //runAccess(audioContext);
 
   function runAccess(audioCtx) {
-    if (!config.analyser || window.mediaStreamReference && window.mediaStreamReference.mediaStream.active === false) {
-      console.log('Running function to grant microphone access.');
-
+    if (!config.analyser || window.wr_mediaStreamReference && window.wr_mediaStreamReference.mediaStream.active === false) {
       if (audioCtx.state === 'running' || audioCtx.state === 'suspended') {
-        getUserMedia({ audio: true, video: false }, gotStream, function(){
-          console.error('Microphone access denied by user.');
-          //alert('Microphone access denied by user.');
-          showAccessMessage('Microphone access denied by user.', false);
+        // console.log('Running function to grant microphone access.');
+        getUserMedia({ audio: true, video: false }, gotStream, function () {
+          showAccessMessage('Microphone access denied.', false);
         });
       }
     } else {
-      console.log('Already have granted microphone access.');
-      showAccessMessage('Microphone access already granted by user.', 'enabled');
+      showAccessMessage('Microphone access already granted.', 'enabled');
       whistleFinder();
     }
   }
