@@ -1,7 +1,8 @@
 {
   "name": "Whistleroll",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "manifest_version": 2,
+  "author": "Sven Parker",
   "description": "Scroll by whistling. Original idea by Jacob Rudenstam.",
   "homepage_url": "https://knogobert.github.io/whistleroll/",
   "icons": {
@@ -14,12 +15,17 @@
     "page": "src/bg/background.html",
     "persistent": true
   },
-  "options_page": "src/options/index.html",
+  "options_page": "src/options/options.html",
   "browser_action": {
     "default_icon": "icons/icon19.png",
     "default_title": "browser action demo",
     "default_popup": "src/popup/popup.html"
   },
+  "permissions": [
+    "tabs",
+    "tabCapture",
+    "storage"
+  ],
   "content_scripts": [
     {
       "matches": [

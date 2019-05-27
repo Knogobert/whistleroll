@@ -4,10 +4,14 @@
 //     "sample_setting": "This is how you use Store.js to remember values"
 // });
 
-
-//example of using a message handler from the inject scripts
-chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-  	chrome.pageAction.show(sender.tab.id);
-    sendResponse();
-  });
+// Open welcome/options on install
+chrome.runtime.onInstalled.addListener((details) => {
+  debugger;
+  if (details.reason.search(/install/g) === -1) {
+      return
+  }
+  chrome.tabs.create({
+      url: chrome.runtime.getURL("src/options/options.html"),
+      active: true
+  })
+})
